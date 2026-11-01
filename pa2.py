@@ -71,22 +71,23 @@ def main():
                 "type": "missing_owner"
             })
 
-        min_os = policy.get("min_os", {})
-        required_version = min_os.get(role)
+        if "min_os" in policy:
+            min_os = policy["min_os"]
+            required_version = min_os.get(role)
 
-        if required_version is None:
-            violations.append({
-                "device": device_id,
-                "type": "unknown_role",
-                "role": role
-            })
-        elif version_is_older(os_version, required_version):
-            violations.append({
-                "device": device_id,
-                "type": "os_outdated",
-                "found": os_version,
-                "required": required_version
-            })
+            if required_version is None:
+                violations.append({
+                    "device": device_id,
+                    "type": "unknown_role",
+                    "role": role
+                })
+            elif version_is_older(os_version, required_version):
+                violations.append({
+                    "device": device_id,
+                    "type": "os_outdated",
+                    "found": os_version,
+                    "required": required_version
+                })
 
         roles[role] = roles.get(role, 0) + 1
         down_count = 0
